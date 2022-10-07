@@ -1,0 +1,54 @@
+.mpcard{
+    margin-top: 50px;
+    margin-left: 20px;
+}
+
+.coloramarillo{
+    color: #fbbd18;
+}
+
+
+
+.tcen{
+   margin-top: 20px;
+  }
+
+.mt40px{
+    margin-top: 40px;
+}
+
+.lbt{
+    border-top: 1px solid white;
+}
+
+.lbtpuntos{
+  
+    border-top: 1px dashed white;
+
+}
+
+.flecha{
+    color: #fbbd18;
+    font-size: 40px;
+
+}
+
+
+.opc{
+    width: 30%;
+    display: inline-block;
+}
+
+.divpm{
+    width: 40%;
+    display: inline-block;
+}
+
+.centtec{
+    align-items: center;
+    text-align: center;
+}
+
+.cblan{
+    color: white;
+}

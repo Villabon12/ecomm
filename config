@@ -1,0 +1,17 @@
+{
+    "protocol": "ftp",
+    "host": "samuel.colombiahosting.com.co",
+    "port": 21,
+    "user": "leonardo",
+    "pass": "0faV0J@JYm3!6_!l",
+    "promptForPass": false,
+    "remote": "/public_html/tiindo.com/",
+    "local": "",
+    "secure": false,
+    "secureOptions": null,
+    "connTimeout": 10000,
+    "pasvTimeout": 10000,
+    "keepalive": 10000,
+    "watch": [],
+    "watchTimeout": 500
+}

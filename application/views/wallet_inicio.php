@@ -205,7 +205,7 @@
                             <h5>Socios en sistema</h5>
                             <br>
                             <div class="table-responsive">
-                                <table class="table" id="order-listing6">
+                                <table class="table" id="order-listing3">
                                     <thead>
                                         <tr>
                                             <th>Nombre Socio</th>
@@ -221,12 +221,13 @@
                                                 <td><?= $s->nombre ?></td>
                                                 <td><?= $s->apellido1 ?></td>
                                                 <td><?= $s->correo ?></td>
-                                                <td><?= $s->ciudad?></td>
-                                                <td><?php if ($s->verificar_user =="habilitado") {?>
+                                                <td><?= $s->ciudad ?></td>
+                                                <?php if ($s->verificar_user == "habilitado") { ?>
                                                     <td>si</td>
-                                                    <?php } else { ?>
+                                                <?php } else { ?>
                                                     <td>no</td>
-                                                    <?php }?> </td>
+                                                <?php } ?>
+
                                             </tr>
                                         <?php } ?>
                                     </tbody>
@@ -259,7 +260,7 @@
                             <br>
                             <div class="table-responsive">
 
-                                <table class="table" id="order-listing3">
+                                <table class="table" id="order-listing4">
                                     <thead>
                                         <tr>
                                             <th>Nombre Cliente</th>
@@ -304,7 +305,7 @@
                             <br>
                             <div class="table-responsive">
 
-                                <table class="table" id="order-listing4">
+                                <table class="table" id="order-listing5">
                                     <thead>
                                         <tr>
                                             <th>Nombre Cliente</th>
@@ -364,7 +365,7 @@
                             <br>
                             <div class="table-responsive">
 
-                                <table class="table" id="order-listing5">
+                                <table class="table" id="order-listing6">
                                     <thead>
                                         <tr>
                                             <th scope="col">Nombre Cliente</th>

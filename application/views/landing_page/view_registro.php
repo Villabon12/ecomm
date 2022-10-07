@@ -32,12 +32,12 @@
         <div class="centrot">
           <header>
             <h1 class="fonth1">REGISTRATE</h1>
+            <?php if ($this->session->flashdata("error")) { ?>
+              <div style="background-color: red;" class="alert alert-danger text-center">
+                <p><?php echo $this->session->flashdata("error") ?></p>
+              </div>
+            <?php } ?>
           </header>
-          <?php if ($this->session->flashdata("error")) { ?>
-            <div style="background-color: red;" class="alert alert-danger text-center">
-              <p><?php echo $this->session->flashdata("error") ?></p>
-            </div>
-          <?php } ?>
         </div>
         <select class="form-control" aria-label="Default select example" name="tipo" id="tipo" style="width: 100%; height :40px;">
           <option selected value="0">Eres?</option>

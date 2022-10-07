@@ -1,3 +1,9 @@
+<footer class="footer">
+    <div class="d-sm-flex justify-content-center justify-content-sm-between">
+        <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Copyright © 2022. Todos los derechos reservados.</span>
+    </div>
+</footer>
+
 <!-- plugins:js -->
 <script src="<?= base_url() ?>admin_temp/vendors/js/vendor.bundle.base.js"></script>
 <!-- endinject -->
@@ -19,6 +25,11 @@
 <script src="<?= base_url() ?>admin_temp/js/dashboard.js"></script>
 <script src="<?= base_url() ?>admin_temp/js/Chart.roundedBarCharts.js"></script>
 <!-- End custom js for this page-->
+
+<script src="<?= base_url() ?>admin_temp/vendors/datatables.net/jquery.dataTables.js"></script>
+<script src="<?= base_url() ?>admin_temp/vendors/datatables.net-bs4/dataTables.bootstrap4.js"></script>
+<script src="<?= base_url() ?>admin_temp/js/data-table.js"></script>
+
 
 
 

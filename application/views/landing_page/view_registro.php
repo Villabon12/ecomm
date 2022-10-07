@@ -78,15 +78,15 @@
         html += '</div>'
         html += '<div class="login__row">'
         html += '<input type="email" class="login__input pass plac" placeholder="Correo" name="Correo" id="email" required  />'
-        html += '</div >'
+        html += '<div id="verificar1"></div></div >'
         html += '<div class="login__row">'
         html += '<input type="number" class="login__input pass plac" placeholder="telefono" name="Telefono" required />'
         html += '</div>'
         html += '<div class="login__row">'
-        html += '<input type="text" class="login__input pass plac" placeholder="usuario" name="User" id="user" required  />'
-        html += '</div>'
+        html += '<input type="text" class="login__input pass plac" placeholder="usuario" name="User" id="user" required/>'
+        html += '<div id="verificar2"></div></div>'
         html += '<div class="login__row">'
-        html += '<input type="password" class="login__input pass plac" placeholder="Contraseña" name="Contra"required  />'
+        html += '<input type="password" class="login__input pass plac" placeholder="Contraseña" name="Contra" required/>'
         html += '</div>'
         html += '<div class="login__row">'
         html += '<input type="password" class="login__input pass plac" placeholder="Confirmacion de contraseña" name="contra1" required />'
@@ -128,10 +128,10 @@
       } else if (id == 2) {
         html = '<form class="form" action="<?= base_url() ?>Inicio_page/insertar_registrar/<?= $perfil->id ?>" method="post" enctype="multipart/form-data">';
         html += '<div class="login__row">'
-        html += '<input type="text" class="login__input name plac" placeholder="Nombre" name="Nombre_enca"required  />'
+        html += '<input type="text" class="login__input name plac" placeholder="Nombre" name="Nombre_enca" required/>'
         html += '</div>'
         html += '<div class="login__row">'
-        html += '<input type="text" class="login__input name plac" placeholder="Apellido" name="Apellido1"required  />'
+        html += '<input type="text" class="login__input name plac" placeholder="Apellido" name="Apellido1" required/>'
         html += '<input type="hidden" name="tipo" value="Socio"/>'
         html += '</div>'
         html += '<div class="login__row">'
@@ -187,28 +187,28 @@
     $("#email").keyup(function() {
       var data = $(this).val()
       $.ajax({
-        url: '<?= base_url() ?>Login/validarCorreo',
+        url: '<?= base_url() ?>Inicio_page/validarCorreo',
         type: "POST",
         data: {
           email: data
         },
         success: function(resp) {
           html = '<h2 style="color:red;">' + resp + '</h2>';
-          $('#verificar1').append(html);
+          $('#verificar1').html(html);
         }
       })
     })
     $("#user").keyup(function() {
       var data = $(this).val()
       $.ajax({
-        url: '<?= base_url() ?>Login/validarUser',
+        url: '<?= base_url() ?>Inicio_page/validarUser',
         type: "POST",
         data: {
           usuario: data
         },
         success: function(resp) {
           html = '<h2 style="color:red;">' + resp + '</h2>';
-          $('#verificar2').append(html);
+          $('#verificar2').html(html);
         }
       })
     })

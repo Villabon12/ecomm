@@ -34,7 +34,7 @@
             <h1 class="fonth1">REGISTRATE</h1>
           </header>
           <?php if ($this->session->flashdata("error")) { ?>
-            <div class="alert alert-danger text-center">
+            <div style="background-color: red;" class="alert alert-danger text-center">
               <p><?php echo $this->session->flashdata("error") ?></p>
             </div>
           <?php } ?>

@@ -17,26 +17,22 @@ class Probar extends CI_Controller
         $this->load->model('Model_comercio');
 
         $this->load->model('Model_landing');
-
+        $this->load->model('Model_cupones');
         $this->load->model('Model_wallet');
     }
 
     public function index()
     {
-        $id = $this->input->get('id');
-        $result['departamentos'] = $this->Model_login->traerDepar();
-        $result['perfil'] = $this->Model_login->cargar_datosRegistro($id);
-        $this->load->view('prueba', $result);
+        $this->load->view('prueba');
+
     }
 
 
     public function insertar_registrar($id_refe)
-
     {
         $contrasena = $this->input->post('Contra');
         $contrasena1 = $this->input->post('contra1');
         $tipo = $this->input->post('tipo');
-
         $miarchivo1 = 'CC_front';
         $config['upload_path'] = './asset/images/confirmacion/';
         $config['allowed_types'] = "jpg|png|jpeg|pdf";
@@ -420,7 +416,6 @@ class Probar extends CI_Controller
     }
 
     function generateRandomString($length)
-
     {
         return substr(str_shuffle(str_repeat($x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length / strlen($x)))), 1, $length);
     }
@@ -460,8 +455,8 @@ class Probar extends CI_Controller
                     "id_derecha" => $id,
                 );
                 $this->Model_login->ModificarDerecha($data, $derecha->id);
-                 $this->session->set_flashdata('exito', '<div class="alert alert-success text-center">Registro exitoso</div>');
-                 redirect(base_url() . "Inicio_page/login", "refresh");
+                $this->session->set_flashdata('exito', '<div class="alert alert-success text-center">Registro exitoso</div>');
+                redirect(base_url() . "Inicio_page/login", "refresh");
 
             } else {
                 do {
@@ -469,13 +464,48 @@ class Probar extends CI_Controller
                         $data = array(
                             "id_derecha" => $id,
                         );
-                         $this->Model_login->ModificarDerecha($data, $derecha->id);
-                         $this->session->set_flashdata('exito', '<div class="alert alert-success text-center">Registro exitoso</div>');
-                         redirect(base_url() . "Inicio_page/login", "refresh");
-                    } 
+                        $this->Model_login->ModificarDerecha($data, $derecha->id);
+                        $this->session->set_flashdata('exito', '<div class="alert alert-success text-center">Registro exitoso</div>');
+                        redirect(base_url() . "Inicio_page/login", "refresh");
+                    }
                     $derecha = $this->Model_login->traerPruebaDerecha($derecha->id_derecha);
                 } while ($derecha->id_derecha != null);
             }
+        }
+    }
+    public function cupones()
+    {
+
+        if ($this->session->userdata('is_logged_in')) {
+
+
+
+            if ($this->session->userdata('ROL') == 'Socio' || $this->session->userdata('ROL') == 'Ultra' || $this->session->userdata('ROL') == 'SocioAdmin' || $this->session->userdata('ROL') == 'Comercio') {
+
+                $result['perfil'] = $this->Model_login->cargar_datos();
+
+                $result['cupones'] = $this->Model_comercio->cupones_index();
+
+                $result['categorias'] = $this->Model_ventas->traerCategorias();
+
+
+                $this->load->view('prueba_header', $result);
+
+                $this->load->view('cupones', $result);
+
+                $this->load->view('prueba_footer', $result);
+            } else {
+
+                $intruso = array(
+                    'id_usuario' => $this->session->userdata('ID'),
+                    'texto' => 'view_socios',
+                    'fecha_registro' => date("Y-m-d H:i:s"),
+                );
+                $this->model_errorpage->insertIntruso($intruso);
+                redirect("" . base_url() . "errorpage/error");
+            }
+        } else {
+            redirect("" . base_url() . "login/");
         }
     }
 }

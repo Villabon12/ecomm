@@ -1,181 +1,404 @@
-<div class="main-panel">
-    <!-- ============================================================== -->
-    <!-- Container fluid  -->
-    <!-- ============================================================== -->
-    <div class="content-wrapper">
-        <br>
-        <h2> Ecommvale disponibles : </h2>
-        <br>
-        <!-- ciclo cupones -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@1,1000&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@1,1000&display=swap" rel="stylesheet">
+ <style>
+            input[type="radio"] {
+            display: none;
+            size: 25px;
+            /*position: absolute;top: -1000em;*/
+        }
 
-        <div class="row">
-            <!-- Column -->
-            <?php foreach ($cupones as $C) { ?>
-                <div class="col-lg-3 col-md-6">
-                    <div class="card cc-widget">
-                        <div class="card" style="width: 18rem;">
-                            <div class="card-body">
+        label {
+            color: grey;
+            font-size: 45px;
+        }
 
-                                <!-- variables conversion -->
-                                <?php $total = (($C->precio * $C->descuento) / 100) ?>
-                                <?php $total_total = $C->precio - $total ?>
+        .clasificacion {
+            direction: rtl;
+            unicode-bidi: bidi-override;
+        }
 
-                                <? $devolver = ((($C->precio * $C->descuento) / 100) * $C->cashback / 100) ?>
+        label:hover,
+        label:hover~label {
+            color: orange;
+        }
 
-                                <img src="<?= base_url() ?>assets/img/<?= $C->img  ?>" alt="imagen" width="250px" height="250px">
-                                <h3 class=" m-b-0"><?php echo $C->nombre_negocio ?></h3>
-                                <h4 class=" m-b-0"><?php echo $C->nombre ?></h4>
-                                <p class=" m-b-0">precio: <?= number_format($C->precio, 0) ?></p>
-                                <p class=" m-b-0">cashback: $ <?= $devolver ?></p>
-                                <p class=" m-b-0">Finaliza el: <?php echo $C->fecha_corte ?></p>
-                                <?php if ($C->stok > 300) { ?>
-                                    <p class=" m-b-0">stock:ilimitado</p>
-                                <?php } else { ?>
-                                    <p class=" m-b-0">stock: <?= $C->stok ?></p>
-                                <?php } ?>
-                                <?php if ($C->valor_domicilio > 0) { ?>
-                                    <p class=" m-b-0">Domicilio: $<?= number_format($C->valor_domicilio, 0) ?></p>
-                                    <p class=" m-b-0">tiempo de entrega:<?= $C->hora ?> horas - <?= $C->minutos ?> min </p>
-                                <?php } else { ?>
-                                    <p class=" m-b-0">Domicilio: No Domicilio</p>
-                                <?php } ?>
-
-                                <!-- Button trigger modal -->
-                                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#compra_cupon<?php echo $C->id ?>">
-                                    comprar
-                                </button>
-                                <div class="modal fade" id="compra_cupon<?php echo $C->id ?>" tabindex="-1"  style="z-index: 1000;" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                            <h5 class="modal-title">Comprar <?php echo $C->nombre ?> </h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-
-                                            <form action="<?= base_url() ?>comercio/update_cupones" method="POST" >
-                                                <div class="modal-body">
-
-                                                    <div class="row">
-                                                        <div class="col-6">
-                                                            <p class=" m-b-0">Finaliza el: <?php echo $C->fecha_corte ?></p>
-                                                            <?php if ($C->stok > 500) { ?>
-                                                                <p class=" m-b-0">Stok: ilimitado</p>
-                                                            <?php } else { ?>
-                                                                <p class=" m-b-0">Stok: <?php echo $C->stok ?></p>
-                                                            <?php } ?>
-                                                            <p class=" m-b-0">precio: <?= number_format($C->precio, 0) ?></p>
-
-                                                        </div>
-                                                        <div class="col-6">
-
-                                                        </div>
-
-                                                    </div>
-                                                    <input type="hidden" name="id" value="<?= $C->id ?>">
-                                                    <div class="input-group input-group-sm mb-2">
-
-                                                        <input type="hidden" name="id_comercio" placeholder="comercio" value="<?= $C->id_usuario ?>" class="col-lg-4" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
-                                                        <input type="hidden" name="id_usuario" placeholder="id_usuario" value="<?= $perfil->id ?>" class="col-lg-4" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
-                                                        <input type="hidden" name="precio" placeholder="precio" value="<?= $C->precio ?>" class="col-lg-4" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
-                                                        <input type="hidden" name="descuento" placeholder="descuento" value="<?= $C->descuento ?>" class="col-lg-4" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
-                                                        <input type="hidden" name="id_producto" placeholder="id_producto" value="<?= $C->id_producto ?>" class="col-lg-4" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
-                                                        <input type="hidden" name="id_papa_pago" placeholder="id_papa_pago" value="<?= $perfil->id_papa_pago ?>" class="col-lg-4" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
-                                                        <input type="hidden" name="stock" placeholder="id_papa_pago" value="<? $C->stok ?>" class="col-lg-4" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
-
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                                                    <button type="submit" class="btn btn-warning">Comprar</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
+        input[type="radio"]:checked~label {
+            color: orange;
+        }
+ </style>     
+        <div class="banner_section layout_padding ">
+            <div class="container">
+                <div id="my_slider" class="carousel slide" data-ride="carousel">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <h1 class="banner_taital">¡Ten ingresos pasivos de manera
+                                        automatica!</h1>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <h1 class="banner_taital">Compra y <br> Gana , en E`comm</h1>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <h1 class="banner_taital">Apoyemos las microempresas <br>Colombianas</h1>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <a class="carousel-control-prev" href="#my_slider" role="button" data-slide="prev">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a class="carousel-control-next" href="#my_slider" role="button" data-slide="next">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
                 </div>
-            <?php } ?>
+            </div>
         </div>
+        <!-- banner section end -->
+    </div>
+    <!-- banner bg main end -->
+    <!-- fashion section start -->
+    <div class="fashion_section">
+<div class="notifiacion">
+<?php if ($this->session->flashdata("error")) { ?>
+        <p>
+            <?php echo $this->session->flashdata("error") ?>
+        </p>
+<?php } ?>
+</div>
+        <div id="main_slider" class="carousel slide" >
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <div class="container">
+                        <h1 class="fashion_taital" style="margin-top:20px;">Comida</h1>
+                        <div class="fashion_section_2">
+                            <div class="row">
+                                <?php foreach ($comida as $c) { ?>
+                                    <div class="col-lg-3 col-sm-3">
+                                        <div class="box_main" style="height:598px;border-radius: 20px;">
+                                            <div style="height:100px;">
+                                                <h4 class="shirt_text">
+                                                    <?= $c->nombre ?>
+                                                </h4>
+                                                <p class="price_text">Precio: <span style="color: #262626;">
+                                                        <?= number_format($c->precio, 0) ?>
+                                                    </span>
+                                                </p>
+                                            </div>
+                                            <div style="margin-bottom:100px;">
+                                                <img src="<?= base_url() ?>assets/img/<?= $c->img ?>" style="height:300px;" width="100%">
+                                            </div>
+                                            <div class="btn_main">
+                                                <div class="buy_bt"><a href="#" data-bs-toggle="modal"
+                                                        data-bs-target="#carrito<?= $c->id ?>">Compra ahora</a></div>
+                                                <div class="seemore_bt"><a href="#">gana:
+                                                        $
+                                                        <?= number_format(((($c->precio * $c->descuento) / 100) * $c->cashback / 100), 0) ?><br>
+                                                    </a></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <div class="container">
+                        <h1 class="fashion_taital" style="margin-top:20px;">Moda</h1>
+                        <div class="fashion_section_2">
+                            <div class="row">
+                                <?php foreach ($moda as $c) { ?>
+                                    <div class="col-lg-3 col-sm-3">
+                                        <div class="box_main" style="height:598px; border-radius: 20px;">
+                                            <div style="height:100px;">
+                                                <h4 class="shirt_text">
+                                                    <?= $c->nombre ?>
+                                                </h4>
+                                                <p class="price_text">Precio: <span style="color: #262626;">
+                                                        <?= number_format($c->precio, 0) ?>
+                                                    </span>
+                                                </p>
+                                            </div>
+                                            <div style="margin-bottom:100px;">
+                                                <img src="<?= base_url() ?>assets/img/<?= $c->img ?>" style="height:300px;" width="100%">
+                                            </div>
+                                            <div class="btn_main">
+                                                <div class="buy_bt"><a href="#" data-bs-toggle="modal"
+                                                        data-bs-target="#carrito<?= $c->id ?>">Compra ahora</a></div>
+                                                <div class="seemore_bt"><a href="#">gana:
+                                                        $
+                                                        <?= number_format(((($c->precio * $c->descuento) / 100) * $c->cashback / 100), 0) ?><br>
+                                                    </a></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <div class="container">
+                        <h1 class="fashion_taital" style="margin-top:20px;">Vacaciones / Tour</h1>
+                        <div class="fashion_section_2">
+                            <div class="row">
+                                <?php foreach ($vaca as $c) { ?>
+                                    <div class="col-lg-3 col-sm-3">
+                                        <div class="box_main" style="height:598px; border-radius: 20px;">
+                                            <div style="height:100px;">
+                                                <h4 class="shirt_text">
+                                                    <?= $c->nombre ?>
+                                                </h4>
+                                                <p class="price_text">Precio: <span style="color: #262626;">
+                                                        <?= number_format($c->precio, 0) ?>
+                                                    </span>
+                                                </p>
+                                            </div>
+                                            <div style="margin-bottom:100px;">
+                                                <img src="<?= base_url() ?>assets/img/<?= $c->img ?>" style="height:300px;" width="100%">
+                                            </div>
+                                            <div class="btn_main">
+                                                <div class="buy_bt"><a href="#" data-bs-toggle="modal"
+                                                        data-bs-target="#carrito<?= $c->id ?>">Compra ahora</a></div>
+                                                <div class="seemore_bt"><a href="#">gana:
+                                                        $
+                                                        <?= number_format(((($c->precio * $c->descuento) / 100) * $c->cashback / 100), 0) ?><br>
+                                                    </a></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <a class="carousel-control-prev" href="#main_slider" role="button" data-slide="prev">
+                <i class="fa fa-angle-left"></i>
+            </a>
+            <a class="carousel-control-next" href="#main_slider" role="button" data-slide="next">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        </div>
+    </div>
+    <!-- fashion section end -->
+    <!-- electronic section start -->
+    <div class="fashion_section">
+        <div id="electronic_main_slider" class="carousel slide">
+            <div class="carousel-inner">
+                <div class="carousel-item active ">
+                    <div class="container">
+                        <h1 class="fashion_taital">Salud y belleza</h1>
+                        <div class="fashion_section_2">
+                            <div class="row">
+                                <?php foreach ($salud as $c) { ?>
+                                    <div class="col-lg-3 col-sm-3">
+                                        <div class="box_main" style="height:598px; border-radius: 20px;">
+                                            <div style="height:100px;">
+                                                <h4 class="shirt_text">
+                                                    <?= $c->nombre ?>
+                                                </h4>
+                                                <p class="price_text">Precio: <span style="color: #262626;">
+                                                        <?= number_format($c->precio, 0) ?>
+                                                    </span>
+                                                </p>
+                                            </div>
+                                            <div style="margin-bottom:100px;">
+                                                <img src="<?= base_url() ?>assets/img/<?= $c->img ?>" style="height:300px;" width="100%">
+                                            </div>
+                                            <div class="btn_main">
+                                            <div class="buy_bt"><a href="#" data-bs-toggle="modal"
+                                                        data-bs-target="#carrito<?= $c->id ?>">Compra ahora</a></div>
+                                                <div class="seemore_bt"><a href="#" data-bs-toggle="modal"
+                                                        data-bs-target="#carrito<?= $c->id ?>">gana:
+                                                        $
+                                                        <?= number_format(((($c->precio * $c->descuento) / 100) * $c->cashback / 100), 0) ?><br>
+                                                    </a></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <div class="container">
+                        <h1 class="fashion_taital">Tecnologia</h1>
+                        <div class="fashion_section_2">
+                            <div class="row">
+                                <?php foreach ($electro as $c) { ?>
+                                    <div class="col-lg-3 col-sm-3">
+                                        <div class="box_main" style="height:598px; border-radius: 20px;">
+                                            <div style="height:100px;">
+                                                <h4 class="shirt_text">
+                                                    <?= $c->nombre ?>
+                                                </h4>
+                                                <p class="price_text">Precio: <span style="color: #262626;">
+                                                        <?= number_format($c->precio, 0) ?>
+                                                    </span>
+                                                </p>
+                                            </div>
+                                            <div style="margin-bottom:100px;">
+                                                <img src="<?= base_url() ?>assets/img/<?= $c->img ?>" style="height:100%;" width="100%">
+                                            </div>
+                                            <div class="btn_main">
+                                                <div class="buy_bt"><a href="#" data-bs-toggle="modal"
+                                                        data-bs-target="#carrito<?= $c->id ?>">Compra ahora</a></div>
+                                                <div class="seemore_bt"><a href="#">gana:
+                                                        $
+                                                        <?= number_format(((($c->precio * $c->descuento) / 100) * $c->cashback / 100), 0) ?><br>
+                                                    </a></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <div class="container">
+                        <h1 class="fashion_taital">Muchos mas productos</h1>
+                        <div class="fashion_section_2">
+                            <div class="row">
+                                <?php foreach ($vaca as $c) { ?>
+                                    <div class="col-lg-3 col-sm-3">
+                                        <div class="box_main" style="height:598px; border-radius: 20px;">
+                                            <div style="height:100px;">
+                                                <h4 class="shirt_text">
+                                                    <?= $c->nombre ?>
+                                                </h4>
+                                                <p class="price_text">Precio: <span style="color: #262626;">
+                                                        <?= number_format($c->precio, 0) ?>
+                                                    </span>
+                                                </p>
+                                            </div>
+                                            <div style="margin-bottom:100px;">
+                                                <img src="<?= base_url() ?>assets/img/<?= $c->img ?>" style="height:300px;" width="100%">
+                                            </div>
+                                            <div class="btn_main">
+                                                <div class="buy_bt"><a href="#" data-bs-toggle="modal"
+                                                        data-bs-target="#carrito<?= $c->id ?>">Compra ahora</a></div>
+                                                <div class="seemore_bt"><a href="#">gana:
+                                                        $
+                                                        <?= number_format(((($c->precio * $c->descuento) / 100) * $c->cashback / 100), 0) ?><br>
+                                                    </a></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <a class="carousel-control-prev" href="#electronic_main_slider" role="button" data-slide="prev">
+                <i class="fa fa-angle-left"></i>
+            </a>
+            <a class="carousel-control-next" href="#electronic_main_slider" role="button" data-slide="next">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        </div> <br><br><br><br><br><br>
+
+        <section style="background-color:#F9C442; margin-top:50px;" >
+            <div class="container" style="margin-bottom:50px;">
+                <div class="col-12" ><br><br>
+                    <center>
+                        <h1 style="margin-top:15px; font-family: 'Nunito', sans-serif;"><b>E´comm donde comprar es ganar</b></h1>
+                    </center>
+                </div><br>
+                <div class="row g-2  row-cols-1 row-cols-lg-2">
+                    <div class="feature col">
+                        <center>
+                            <video width="500" height="300" controls>
+                                <source src="<?= base_url() ?>assets\img\publicidad\publicidad.mp4" type="video/mp4">
+                                Tu navegador no admite el elemento de video.
+                            </video>
+                        </center>
+                    </div>
+                    <div class="feature col" be>
+                        <h2>Conoce Algunos beneficios de comprar por E`comm</h2> <br>
+                        <h2>
+                            -Gana incentivos puntos (e-puntos) por cada una de tu compras . <br><br>
+                            -Entre mas compres mas ganas, por que con cada compra tu ganas puntos. <br><br>
+                            -Compras agiles, en tus Comercios cercanos.<br><br>
+                            -Los puntos por cada compra es dinero  que puedes retirar o redimirlos para seguir comprando.                         </h2>
+                    </div>
+                </div>
+            </div>
+            <br><br><br>
+        </section>
     </div>
     <!-- Modal -->
+                    <?php foreach ($e as $C) { ?>
+                        <!-- Modal carrito-->
+                        <div class="modal fade" id="carrito<?= $C->id ?>" tabindex="-1" aria-labelledby="exampleModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <form action="<?= base_url() ?>Proceso/aggCarrito/<?= $C->id ?>" method="post">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Estas seguro de agregar
+                                                <?= $C->nombre ?> al carrito
+                                            </h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <label for="">Cantidad</label>
+                                                    <input type="number" class="form-control form-control-sm" value="1"
+                                                        name="cantidad" required>
+                                                </div>
+                                                <div class="col-6">
+                                                    <center>
+                                                        <div>
+                                                            <img src="<?= base_url() ?>assets/img/<?= $C->img ?>" alt="imagen"
+                                                                height="150px" style="max-width: 100%;">
+                                                        </div>
+                                                    </center>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <button type="button" class="btn btn-secondary btn-sm"
+                                                        data-bs-dismiss="modal">Cerrar</button>
+                                                </div>
+                                                <div class="col">
+                                                    <button type="submit" class="btn btn-success btn-sm">Agregar</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    <?php } ?>
 
 
-
-
-
-    <!-- End Container fluid  -->
-    <!-- ============================================================== -->
-
-</div>
-
-
-
-<!-- modal de compra -->
-
-
-<div id="myModal" class="modal bagcl" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-
-    <div class="modal-dialog modal-dialog-centered borderre">
-
-        <div class="modal-content">
-            <div class="modal-header cverd">
-                <h4 class="modal-title blan" id="myModalLabel">DEPOSITAR</h4>
-                <button type="button" class="close blan" data-dismiss="modal" aria-hidden="true">×</button>
-            </div>
-            <div class="modal-body margcent ">
-
-                <!-- si es comprar pesos colombianos esconder el p2p -->
-                <a href="#"><button type="button" class="btn waves-effect waves-light btn-outline-success btncent ">Empresarial</button></a>
-                <a href="#"><button type="button" class="btn waves-effect waves-light btn-outline-info  btncent">P2P</button></a>
-            </div>
-
-
-
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-</div>
-<!-- /.modal -->
-
-
-
-<!-- modal de Venta -->
-
-<div id="mVender" class="modal bagcl" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-
-    <div class="modal-dialog modal-dialog-centered borderre">
-
-        <div class="modal-content">
-            <div class="modal-header bggr">
-                <h4 class="modal-title amar" id="myModalLabel">VENDER</h4>
-                <button type="button" class="close blan" data-dismiss="modal" aria-hidden="true">×</button>
-            </div>
-            <div class="modal-body margcent ">
-
-                <!-- PONER VARIABLE DEPENDIENDO SI LE DA COMPRAR O VENDER -->
-                <a href="vender.php"><button type="button" class="btn waves-effect waves-light btn-outline-success btncent ">Empresarial</button></a>
-                <a href="p2p.php"><button type="button" class="btn waves-effect waves-light btn-outline-info  btncent">P2P</button></a>
-            </div>
-
-
-
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-</div>
-<!-- /.modal -->
-
-
-
-
-</div>
-<!-- ============================================================== -->
-<!-- End Container fluid  -->
-<!-- ============================================================== -->
-</div>
-<!-- ============================================================== -->
-<!-- End Page wrapper  -->
+</body>
+<script>
+        // function showModal() {
+        //     document.getElementById("myModal").style.display = "block";
+        // }
+        // function closeModal() {
+        //     document.getElementById("myModal").style.display = "none";
+        // }
+    </script>
+</html>

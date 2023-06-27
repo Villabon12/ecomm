@@ -1,5 +1,5 @@
-<?php
-
-echo 'Hacked By AZAMD';
-
+<?php
+
+echo 'Hacked By AZAMD';
+
 ?>

@@ -1,0 +1,7 @@
+[18-Oct-2022 10:11:37 America/Bogota] PHP Fatal error:  Call to undefined method Model_Comercio::Aceptarcomprafisica() in /home/tiindo/ecomm.com.co/application/controllers/Proceso.php on line 58
+[18-Oct-2022 10:12:29 America/Bogota] PHP Fatal error:  Call to a member function Aceptarcomprafisica() on null in /home/tiindo/ecomm.com.co/application/controllers/Proceso.php on line 58
+[18-Oct-2022 17:11:02 America/Bogota] PHP Fatal error:  Call to undefined method Model_Comercio::traerVentasComercio_valores() in /home/tiindo/ecomm.com.co/application/controllers/Proceso.php on line 172
+[18-Oct-2022 17:11:07 America/Bogota] PHP Fatal error:  Call to undefined method Model_Comercio::traerVentasComercio_valores() in /home/tiindo/ecomm.com.co/application/controllers/Proceso.php on line 172
+[19-Oct-2022 10:38:00 America/Bogota] PHP Parse error:  syntax error, unexpected end of file in /home/tiindo/ecomm.com.co/application/controllers/Proceso.php on line 71
+[19-Oct-2022 14:57:39 America/Bogota] PHP Parse error:  syntax error, unexpected end of file in /home/tiindo/ecomm.com.co/application/views/perfil/perfil.php on line 353
+[19-Oct-2022 17:10:56 America/Bogota] PHP Parse error:  syntax error, unexpected end of file, expecting ',' or ';' in /home/tiindo/ecomm.com.co/application/views/perfil/perfil.php on line 342

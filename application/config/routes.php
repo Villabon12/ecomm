@@ -185,3 +185,31 @@ $route['backoffice/curso/basico']='product/cursoMDtiindoBasico';
 
 
 /* FIN RUTAS Multiniveltiindo */
+
+$route['api/'] = 'Ecommpay/pide_user_tiindo'; 
+
+/* RUTAS PARA ECOMM */
+$route['comercio/perfil'] = 'Perfil/perfilcomer';
+$route['wallet'] = 'comercio';
+
+$route['parametros'] = 'comercio/config_parametros';
+$route['recargas/observacion'] = 'comercio/historial_recargas';
+$route['datos/socios'] = 'Validacion/verificar_user';
+$route['datos/comercios'] = 'Validacion/verificar_comer';
+$route['solicitudes/admin'] = 'Solicitudes/solicitudesAdmin';
+
+/* RUTAS PARA SOCIOS */
+$route['cupones/categorias/(:any)'] = 'comercio/cuponescate/$1';
+$route['cupones'] = 'comercio/cupones';
+$route['seguros'] = 'Seguros/seguros';
+$route['tarjetas'] = 'Tarjetas/view_tarjetas';
+$route['team'] = 'comercio/binario';
+$route['compras'] = 'Proceso/compras';
+
+$route['perfil'] = 'Perfil/perfil';
+
+//RUTAS PARA PROCESO DE ECOMMPAY
+$route['open/api/(:any)'] = 'Ecommpay/login/$1';
+
+$route['confirm/api'] = 'Ecommpay/modalConfirm';
+

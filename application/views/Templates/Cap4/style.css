@@ -1,0 +1,62 @@
+body {
+    color: #fff;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 15px;
+  
+    background: #060606;
+    background: -webkit-linear-gradient(bottom right, #060606, #058AC4);
+    background: -moz-linear-gradient(bottom right, #060606, #058AC4);
+    background: linear-gradient(to top left, #060606, #058AC4);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    
+
+
+
+}
+
+
+
+.profile-picture {
+    display: block;
+    margin-top:5%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: auto;
+    height: auto;
+    max-width: 150px;
+    border-radius: 50%;
+  
+  }
+
+.name {
+    font-family: 'Fugaz One', cursive;
+    text-align: center;
+    font-size: 30px;
+  }
+
+.links {
+      font-family: 'Barlow Semi Condensed', sans-serif;
+      text-align: center;
+      margin-top: 10px;
+      padding: 15px;
+      border: 1px solid white;
+      border-width: 2px;
+      width: 290px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      border-radius: 100px;
+  }
+
+a {
+    text-decoration: none;
+    color: white;
+    transition: color 0.5s; 
+}
+
+
+a:hover {
+    color: #000;
+    background: #fff;
+}

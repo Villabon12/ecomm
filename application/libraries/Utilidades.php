@@ -1,12 +1,12 @@
-<?php
-defined('BASEPATH') OR exit('No direct script access allowed');
-
-class Utilidades {
-
-  function CalculaPeriodosMembresia(){
-    
-  }
-
-}
-
-?>
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+class Utilidades {
+
+  function CalculaPeriodosMembresia(){
+    
+  }
+
+}
+
+?>

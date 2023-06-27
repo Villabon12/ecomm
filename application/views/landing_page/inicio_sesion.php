@@ -38,7 +38,7 @@
       <div class="login">
         <div class="container" style="padding-top: 65px;">
           <center>
-            <img src="<?= base_url() ?>dist/favicon.png" width="280" height="120">
+            <img src="<?= base_url() ?>dist/favicon.png" width="70%" height="50%">
           </center>
         </div>
         <?php if ($this->session->flashdata("error") ) { ?>
@@ -48,7 +48,7 @@
             <p><?php echo $this->session->flashdata("exito") ?></p>
         <?php } ?>
         <div class="login__form">
-          <form class="form" action="<?= base_url() ?>Inicio_page/validaAcceso" method="post">
+          <form class="form" action="<?= base_url() ?>Ecommpay/validaAcceso" method="post">
             <div class="login__row">
               <svg class="login__icon name svg-icon" viewBox="0 0 20 20">
                 <path d="M0,20 a10,8 0 0,1 20,0z M10,0 a4,4 0 0,1 0,8 a4,4 0 0,1 0,-8" />
@@ -62,7 +62,7 @@
               <input type="password" class="login__input pass" placeholder="Contraseña" name="pass" required />
             </div>
             <button type="submit" class="login__submit">Iniciar Sesion</button>
-            <!-- <p class="login__signup">No tienes Cuenta? &nbsp;<a href="<?= base_url() ?>Inicio_page/registro/10732">Registrate</a></p> -->
+            <p class="login__signup">¿Olvidaste la contraseña? &nbsp;<a href="<?= base_url() ?>Inicio_page/olvidarContra">Olvidar clave</a></p> 
           </form>
           <div class="input-group">
 

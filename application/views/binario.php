@@ -125,9 +125,11 @@
                                 </div>
                             </div>
                         </div>
-                        <h4 style="color:white;"> Link para incribir todo.
+                        <h4> Link para incribir Usuarios. </h4>
+
                             <a href="<?= base_url() ?>Inicio_page/registro/<?= $perfil->id ?>"><?= base_url() ?>Inicio_page/registro/<?= $perfil->id ?></a>
-                        </h4>
+                        <h4> Link para incribir Comercios.</h4>
+                            <a href="<?= base_url() ?>Inicio_page/comercio/<?= $perfil->id ?>"><?= base_url() ?>Inicio_page/comercio/<?= $perfil->id ?></a>
                     </div>
                 </div>
             </div>

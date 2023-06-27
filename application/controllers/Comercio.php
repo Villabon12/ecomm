@@ -11,7 +11,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 
 class Comercio extends CI_Controller
-
 {
 	//metodo contructor 
 	function __construct()
@@ -20,21 +19,32 @@ class Comercio extends CI_Controller
 		parent::__construct();
 
 		if ($this->session->userdata('is_logged_in')) {
+			$this->load->model('Model_login');
+
+			$this->load->model('Model_comercio');
+
+			$this->load->model('model_errorpage');
+
+			$this->load->model('Model_ventas');
+
+			$this->load->model('Model_recargas');
+
+			$this->load->model('Model_solicitudes');
+
+			$this->load->model('Model_cupones');
+
+			$this->load->model('Model_seguros');
+
+			$this->load->model('Model_tarjetas');
 		} else {
 
-			redirect(base_url() . "");
+			redirect(base_url() . "Inicio_page");
 		}
-		$this->load->model('Model_login');
-
-		$this->load->model('Model_comercio');
-
-		$this->load->model('model_errorpage');
 	}
 
 
 
 	public function index()
-
 	{
 
 		if ($this->session->userdata('is_logged_in')) {
@@ -43,21 +53,28 @@ class Comercio extends CI_Controller
 
 			if ($this->session->userdata('ROL') == 'Socio' || $this->session->userdata('ROL') == 'Ultra' || $this->session->userdata('ROL') == 'SocioAdmin' || $this->session->userdata('ROL') == 'Comercio') {
 
-				$id = $this->input->get('Id');
+				
+
 
 				if ($this->session->userdata('ROL') == 'Socio' || $this->session->userdata('ROL') == 'SocioAdmin') {
 
 					$result['perfil'] = $this->Model_login->cargar_datos();
 
-					$result['historial_referidos'] = $this->Model_comercio->traerCompraPapa($id);
+					$id = $result['perfil']->id;
 
-					$result['abuelo'] = $this->Model_comercio->traerCompraAbuelo($id);
+					$result['cuentas'] = $this->Model_solicitudes->consultcuenta();
 
 					$result['todo'] = $this->Model_comercio->traerTodoComercio();
 
-					$result['devolver'] = $this->Model_comercio->traerCashback($id);
+					$result['c1'] = $this->Model_comercio->traerCashbackpropio($id);
 
-					$result['ventas'] = $this->Model_comercio->traerVentasComercio($id);
+					$result['c2'] = $this->Model_comercio->traerCashbackporpapa($id);
+
+					$result['c3'] = $this->Model_comercio->traerCashbackporabuelo($id);
+
+					$result['c4'] = $this->Model_comercio->traerCashbackpapacomer($id);
+
+					$result['gana'] = $this->Model_comercio->traergananciaspapacomer($id);
 
 					$result['suma'] = $this->Model_comercio->suma_cuentas_deudoras();
 
@@ -65,37 +82,47 @@ class Comercio extends CI_Controller
 
 					$result['total'] = $this->Model_comercio->traerComprasTotal();
 
-					$result['historial'] = $this->Model_comercio->traerCompra($id);
+					$result['historial'] = $this->Model_comercio->traerCompra();
+
+					$result['historial1'] = $this->Model_comercio->traercomprasreferidohijo($id);
+
+					$result['historial2'] = $this->Model_comercio->traercomprasreferidonieto($id);
 
 					$result['socio'] = $this->Model_comercio->socios();
+
+					$result['ciudad'] = $this->Model_comercio->traerciudad1();
+
+					$result['parametro'] = $this->Model_comercio->traer_parametros(14);
+
+					$result['d1'] = $this->Model_comercio->traer_parametros(13);
+
+					$result['d2'] = $this->Model_comercio->traer_parametros(12);
+
+					$result['count'] = $this->Model_tarjetas->buscartarjetas();
+
+					$result['tb_tarje'] = $this->Model_tarjetas->tb_tarjetascompra();
+
+					$result['carritoTotal'] = $this->Model_comercio->carritoTotal();
+
+					$result['dt'] = $this->Model_comercio->Traercarritouser();
+
+					$result['categorias'] = $this->Model_cupones->traerCategorias();
+
 
 					$this->load->view('prueba_header', $result);
 
 					$this->load->view('wallet_inicio', $result);
 
 					$this->load->view('prueba_footer', $result);
+
 				} else if ($this->session->userdata('ROL') == 'Comercio') {
 
 					$result['perfil'] = $this->Model_login->cargar_datos_comercio();
-
-					$result['historial_referidos'] = $this->Model_comercio->traerCompraPapa($id);
-
-					$result['abuelo'] = $this->Model_comercio->traerCompraAbuelo($id);
-
 					$result['todo'] = $this->Model_comercio->traerTodoComercio();
-
-					$result['devolver'] = $this->Model_comercio->traerCashback($id);
-
-					$result['ventas'] = $this->Model_comercio->traerVentasComercio($id);
-
-					$result['suma'] = $this->Model_comercio->suma_cuentas_deudoras();
-
-					$result['ganancias'] = $this->Model_comercio->suma_cuentas_negocios();
-
-					$result['total'] = $this->Model_comercio->traerComprasTotal();
-
-					$result['historial'] = $this->Model_comercio->traerCompra($id);
-
+					$result['ventas'] = $this->Model_comercio->traerVentasComercio();
+					$result['cuentas'] = $this->Model_solicitudes->consultcuenta();
+					$result['carrito'] = $this->Model_comercio->Traercarritonegopendiente();
+					$result['categorias'] = $this->Model_cupones->traerCategorias();
 					$this->load->view('prueba_header', $result);
 
 					$this->load->view('wallet_inicio', $result);
@@ -135,31 +162,89 @@ class Comercio extends CI_Controller
 		}
 	}
 
+	public function graficoBin()
+	{
+		$perfil = $this->Model_login->cargar_datos();
 
+		$principald = $this->Model_login->binarioArbolDerecha($perfil->id);
 
-	public function binario($id)
+		$principali = $this->Model_login->binarioArbolIzquierda($perfil->id);
 
+		if ($perfil->id_derecha != 0) {
+
+			$derecha = $this->Model_login->binarioArbolDerecha($principald->r_d);
+
+			$derechai = $this->Model_login->binarioArbolIzquierda($principald->r_d);
+
+		} else {
+
+			$derecha = null;
+
+			$derechai = null;
+
+		}
+
+		if ($perfil->id_izquierda != 0) {
+
+			$izquierda = $this->Model_login->binarioArbolDerecha($principali->r_d);
+
+			$izquierdad = $this->Model_login->binarioArbolIzquierda($principali->r_d);
+
+		} else {
+
+			$izquierda = null;
+
+			$izquierdad = null;
+		}
+
+		$result['principal'] = $principald;
+
+		$result['izquierdap'] = $principali;
+
+		$result['derecha'] = $derecha;
+
+		$result['derechai'] = $derechai;
+
+		$result['izquierda'] = $izquierda;
+
+		$result['izquierdad'] = $izquierdad;
+
+		$result['perfil'] = $perfil;
+
+		$result['carritoTotal'] = $this->Model_comercio->carritoTotal();
+		$result['dt'] = $this->Model_comercio->Traercarritouser();
+		$result['categorias'] = $this->Model_cupones->traerCategorias();
+
+		$this->load->view('prueba_header', $result);
+		$this->load->view('binario/binario_all', $result);
+		$this->load->view('prueba_footer', $result);
+	}
+
+	public function binario()
 	{
 
 		if ($this->session->userdata('is_logged_in')) {
 
-
-
 			if ($this->session->userdata('ROL') == 'Socio' || $this->session->userdata('ROL') == 'Ultra' || $this->session->userdata('ROL') == 'SocioAdmin' || $this->session->userdata('ROL') == 'Comercio') {
 
 
+				$result['categorias'] = $this->Model_cupones->traerCategorias();
 
 				$result['perfil'] = $this->Model_login->cargar_datos();
+				$id = $result['perfil']->id;
 
 				$result['binario'] = $this->Model_comercio->binario($id);
 
 				$result['registro'] = $this->Model_comercio->estadoRegisto($id);
 
+				$result['carritoTotal'] = $this->Model_comercio->carritoTotal();
 
+				$result['dt'] = $this->Model_comercio->Traercarritouser();
+				$result['ciudad'] = $this->Model_comercio->traerciudad1();
 
 				$this->load->view('prueba_header', $result);
 
-				$this->load->view('binario', $result);
+				$this->load->view('binario/binario', $result);
 
 				$this->load->view('prueba_footer', $result);
 			} else {
@@ -201,14 +286,14 @@ class Comercio extends CI_Controller
 
 		if ($ubica == "derecha") {
 
-			$insertar = array("ubica" => "izquierda",);
+			$insertar = array("ubica" => "izquierda", );
 
 			$this->Model_comercio->modificarRegistro($insertar, $id);
 
 			redirect(base_url() . "comercio/binario/" . $id);
 		} else {
 
-			$insertar = array("ubica" => "derecha",);
+			$insertar = array("ubica" => "derecha", );
 
 			$this->Model_comercio->modificarRegistro($insertar, $id);
 
@@ -216,178 +301,26 @@ class Comercio extends CI_Controller
 		}
 	}
 
-	public function productos($id)
 
+
+	public function selectciudad()
 	{
+		$result['perfil'] = $this->Model_login->cargar_datos();
 
-		if ($this->session->userdata('is_logged_in')) {
 
+		$result['ciudad'] = $this->Model_login->traerDepar();
 
 
-			if ($this->session->userdata('ROL') == 'Socio' || $this->session->userdata('ROL') == 'Ultra' || $this->session->userdata('ROL') == 'SocioAdmin' || $this->session->userdata('ROL') == 'Comercio') {
+		$this->load->view('prueba_header', $result);
 
+		$this->load->view('ciudad', $result);
 
-
-
-
-				$result['perfil'] = $this->Model_login->cargar_datos_comercio();
-
-				$result['productos'] = $this->Model_comercio->traer_producto($id);
-
-				$this->load->view('prueba_header', $result);
-
-				$this->load->view('productos', $result);
-
-				$this->load->view('prueba_footer', $result);
-			} else {
-
-
-
-				$intruso = array(
-
-
-
-					'id_usuario' => $this->session->userdata('ID'),
-
-
-
-					'texto' => 'view_socios',
-
-
-
-					'fecha_registro' => date("Y-m-d H:i:s"),
-
-
-
-				);
-
-
-
-				$this->model_errorpage->insertIntruso($intruso);
-
-
-
-				redirect("" . base_url() . "errorpage/error");
-			}
-		} else {
-
-
-
-			redirect("" . base_url() . "login/");
-		}
-	}
-
-
-
-	public function guardarProducto()
-
-	{
-
-		$mi_archivo = 'img';
-
-		$config['upload_path'] = './assets/img/';
-
-		$config['allowed_types'] = "jpg|png|jpeg";
-
-
-
-		$this->load->library('upload', $config);
-
-
-
-		if (!$this->upload->do_upload($mi_archivo)) {
-
-			$error = array('error' => $this->upload->display_errors());
-
-			echo json_encode($error);
-		} else {
-
-			$data = array("upload_data" => $this->upload->data());
-
-			$imagen = $data['upload_data']['file_name'];
-
-			$arre = array(
-
-				"id_usuario" => $this->input->post('id_usuario'),
-
-				"nombre" => $this->input->post('nombre'),
-
-				"precio" => $this->input->post('precio'),
-
-				"valor_domicilio" => $this->input->post('valor_domicilio'),
-
-				"hora" => $this->input->post('hora'),
-
-				"minutos" => $this->input->post('minutos'),
-
-				"img" => $imagen,
-
-			);
-
-			if ($this->Model_comercio->guardarProducto($arre)) {
-
-				redirect(base_url() . "comercio/productos/" . $arre['id_usuario']);
-			} else {
-
-				$this->session->set_flashdata("error", "no se pudo guardar la informacion");
-			}
-		}
-	}
-
-
-
-	public function eliminarProducto($id)
-
-	{
-
-
-
-		$activo = 0;
-
-		$id_usuario = $this->input->post('id_usuario');
-
-		$insertar = array(
-
-			"activo" => $activo,
-
-		);
-
-		$this->Model_comercio->eliminarProducto($insertar, $id);
-
-		redirect(base_url() . "comercio/productos/" . $id_usuario);
-	}
-
-	public function modificarProducto($id)
-
-
-
-	{
-
-		$id_usuario = $this->input->post('id_usuario');
-
-		$nombre = $this->input->post('nombre');
-
-		$precio = $this->input->post('precio');
-
-		$insertar = array(
-
-			"id_usuario" => $id_usuario,
-
-			"nombre" => $nombre,
-
-			"precio" => $precio,
-
-		);
-
-		$this->Model_comercio->modificarProducto($insertar, $id);
-
-		redirect(base_url() . "productos/" . $insertar['id_usuario']);
+		$this->load->view('prueba_footer', $result);
 	}
 
 
 
 	public function cupones()
-
 	{
 
 		if ($this->session->userdata('is_logged_in')) {
@@ -395,17 +328,36 @@ class Comercio extends CI_Controller
 
 
 			if ($this->session->userdata('ROL') == 'Socio' || $this->session->userdata('ROL') == 'Ultra' || $this->session->userdata('ROL') == 'SocioAdmin' || $this->session->userdata('ROL') == 'Comercio') {
+				// $result['slider'] = $this->Model_cupones->slider_todo();
+				// $result['tipo'] = $this->Model_comercio->tipo1();
+				///
 
+				// $cashback = $this->Model_comercio->traer_parametros(1); // % cashback papa comercio
+				// $result['cashback'] = $cashback;
 
+				// $result['e'] = $this->Model_comercio->pruebaphp($result['perfil']->ciu_co);
+				// $result['carritoTotal'] = $this->Model_comercio->carritoTotal();
+				// $result['dt'] = $this->Model_comercio->Traercarritouser();
+				// $result['categorias'] = $this->Model_ventas->traerCategorias2($result['perfil']->ciu_co);
+				// $result['comer'] = $this->Model_comercio->traernego($result['perfil']->ciu_co);
+				// $result['tb_tarje'] = $this->Model_tarjetas->tb_tarjetascompra();
+				// $result['count'] = $this->Model_tarjetas->buscartarjetas();
 
-
-
+				// $result['mas_ven'] = $this->Model_cupones->mas_vendido($result['perfil']->ciu_co);
+				// $result['ciudad'] = $this->Model_comercio->traerciudad1();
+				///interfaz
 				$result['perfil'] = $this->Model_login->cargar_datos();
-
-				$result['cupones'] = $this->Model_comercio->cupones_index();
-
-
-
+				$result['e'] = $this->Model_comercio->pruebaphp($result['perfil']->ciu_co);
+				$result['carritoTotal'] = $this->Model_comercio->carritoTotal();
+				$result['dt'] = $this->Model_comercio->Traercarritouser();
+				$result['comida'] = $this->Model_cupones->comidaint($result['perfil']->ciu_co);
+				$result['moda'] = $this->Model_cupones->modaint($result['perfil']->ciu_co);
+				$result['vaca'] = $this->Model_cupones->vacationint();
+				$result['salud'] = $this->Model_cupones->saludint($result['perfil']->ciu_co);
+				$result['electro'] = $this->Model_cupones->electroint($result['perfil']->ciu_co);
+				$result['e'] = $this->Model_cupones->todito();
+				$result['categorias'] = $this->Model_cupones->traerCategorias();
+				$result['ciudad'] = $this->Model_comercio->traerciudad1();
 				$this->load->view('prueba_header', $result);
 
 				$this->load->view('cupones', $result);
@@ -413,44 +365,64 @@ class Comercio extends CI_Controller
 				$this->load->view('prueba_footer', $result);
 			} else {
 
-
-
 				$intruso = array(
-
-
-
 					'id_usuario' => $this->session->userdata('ID'),
-
-
-
 					'texto' => 'view_socios',
-
-
-
 					'fecha_registro' => date("Y-m-d H:i:s"),
-
-
-
 				);
-
-
-
 				$this->model_errorpage->insertIntruso($intruso);
-
-
-
 				redirect("" . base_url() . "errorpage/error");
 			}
 		} else {
-
-
-
 			redirect("" . base_url() . "login/");
 		}
 	}
+	public function cuponescate($id)
+	{
+		if ($this->session->userdata('is_logged_in')) {
 
-	public function create_cupones($id)
+			if ($this->session->userdata('ROL') == 'Socio' || $this->session->userdata('ROL') == 'Ultra' || $this->session->userdata('ROL') == 'SocioAdmin' || $this->session->userdata('ROL') == 'Comercio') {
 
+				$result['perfil'] = $this->Model_login->cargar_datos();
+
+				$result['e'] = $this->Model_comercio->cuponcategoria($id, $result['perfil']->ciu_co);
+
+				$result['tipo'] = $this->Model_comercio->tipo1();
+
+				$result['catego'] = $this->Model_comercio->catego($id);
+
+				$result['categorias'] = $this->Model_cupones->traerCategorias();
+
+				$result['ciudad'] = $this->Model_comercio->traerciudad1();
+
+				$result['count'] = $this->Model_tarjetas->buscartarjetas();
+
+				$result['tb_tarje'] = $this->Model_tarjetas->tb_tarjetascompra();
+
+				$result['carritoTotal'] = $this->Model_comercio->carritoTotal();
+
+				$result['dt'] = $this->Model_comercio->Traercarritouser();
+
+				$this->load->view('prueba_header', $result);
+
+				$this->load->view('cupones_nego', $result);
+
+				$this->load->view('prueba_footer', $result);
+			} else {
+
+				$intruso = array(
+					'id_usuario' => $this->session->userdata('ID'),
+					'texto' => 'view_socios',
+					'fecha_registro' => date("Y-m-d H:i:s"),
+				);
+				$this->model_errorpage->insertIntruso($intruso);
+				redirect("" . base_url() . "errorpage/error");
+			}
+		} else {
+			redirect("" . base_url() . "login/");
+		}
+	}
+	public function cuponesciudad($id)
 	{
 
 		if ($this->session->userdata('is_logged_in')) {
@@ -460,14 +432,63 @@ class Comercio extends CI_Controller
 			if ($this->session->userdata('ROL') == 'Socio' || $this->session->userdata('ROL') == 'Ultra' || $this->session->userdata('ROL') == 'SocioAdmin' || $this->session->userdata('ROL') == 'Comercio') {
 
 
+				$result['perfil'] = $this->Model_login->cargar_datos();
+
+				$result['product'] = $this->Model_comercio->negocioexacto($id);
+
+				$result['comer'] = $this->Model_login->datos_comercionombre($id);
+
+				$result['tipo'] = $this->Model_comercio->tipo1();
+
+				$result['comercio'] = $this->Model_login->datos_comercionombre($id);
+
+				$result['categorias'] = $this->Model_ventas->traerCategorias2($result['perfil']->ciudad);
+
+				$result['count'] = $this->Model_tarjetas->buscartarjetas();
+
+				$result['tb_tarje'] = $this->Model_tarjetas->tb_tarjetascompra();
+
+				$result['carritoTotal'] = $this->Model_comercio->carritoTotal();
+
+				$result['dt'] = $this->Model_comercio->Traercarritouser();
+				$result['ciudad'] = $this->Model_comercio->traerciudad1();
 
 
+				$this->load->view('prueba_header', $result);
+
+				$this->load->view('cupones_ciudad', $result);
+
+				$this->load->view('prueba_footer', $result);
+			} else {
+
+				$intruso = array(
+					'id_usuario' => $this->session->userdata('ID'),
+					'texto' => 'view_socios',
+					'fecha_registro' => date("Y-m-d H:i:s"),
+				);
+				$this->model_errorpage->insertIntruso($intruso);
+				redirect("" . base_url() . "errorpage/error");
+			}
+		} else {
+			redirect("" . base_url() . "login/");
+		}
+	}
+	public function create_cupones($id)
+	{
+		if ($this->session->userdata('is_logged_in')) {
+
+			if ($this->session->userdata('ROL') == 'Socio' || $this->session->userdata('ROL') == 'Ultra' || $this->session->userdata('ROL') == 'SocioAdmin' || $this->session->userdata('ROL') == 'Comercio') {
 
 				$result['perfil'] = $this->Model_login->cargar_datos_comercio();
 
-				$result['productos'] = $this->Model_comercio->traer_producto($id);
+				$result['cupones'] = $this->Model_comercio->traerCupones();
 
-				$result['cupones'] = $this->Model_comercio->traerCupones($id);
+				$result['categorias'] = $this->Model_ventas->traerCategoriastoda();
+
+				$result['tipo'] = $this->Model_comercio->tipo();
+
+				$result['tb_tarjetas'] = $this->Model_tarjetas->tb_tarjetas();
+
 
 				$this->load->view('prueba_header', $result);
 
@@ -479,28 +500,15 @@ class Comercio extends CI_Controller
 
 
 				$intruso = array(
-
-
-
 					'id_usuario' => $this->session->userdata('ID'),
-
-
 
 					'texto' => 'view_socios',
 
-
-
 					'fecha_registro' => date("Y-m-d H:i:s"),
-
-
 
 				);
 
-
-
 				$this->model_errorpage->insertIntruso($intruso);
-
-
 
 				redirect("" . base_url() . "errorpage/error");
 			}
@@ -511,123 +519,241 @@ class Comercio extends CI_Controller
 			redirect("" . base_url() . "login/");
 		}
 	}
-
-	public function guardarCupones()
-
+	public function guardarCupones($id)
 	{
+		$atos_comercio = $this->Model_login->cargar_datos_comercio();
 
+		if ($atos_comercio->estado == 0) {
+			$this->session->set_flashdata('error', '  <center><div class="alert alert-danger text-center  d-flex" style="width: 1000px;"> Error al subir Ecommvale,te encuentras inhabilitado</div></center>');
+			redirect(base_url() . "comercio/create_cupones/" . $id, "refresh");
+		} else {
+			$valor_nacio = $this->input->post('valor_nacio');
 
-
-		$id_usuario = $this->input->post('id_usuario');
-
-		$id_producto = $this->input->post('id_producto');
-
-		$descuento = $this->input->post('descuento');
-
-		$fecha_corte = $this->input->post('fecha_corte');
-
-		$stock = $this->input->post('stok');
-
-
-
-		$insertar = array(
-
-			"id_usuario" => $id_usuario,
-
-			"id_producto" => $id_producto,
-
-			"descuento" => $descuento,
-
-			"fecha_corte" => $fecha_corte,
-
-			"stok" => $stock,
-
-		);
-
-		//al agregar me devuelva
-
-		$this->Model_comercio->guardarcupon($insertar);
-
-		redirect(base_url() . "comercio/create_cupones/" . $insertar['id_usuario']);
-	}
-
-
-
-	public function update_cupones()
-	{
-		$id = $this->input->post('id');
-		$cantidad = 1;
-		$id_comercio = $this->input->post('id_comercio');
-		$id_usuario = $this->input->post('id_usuario');
-		$id_producto = $this->input->post('id_producto');
-		$id_papa_pago = $this->input->post('id_papa_pago');
-
-
-		$result = $this->Model_comercio->cargar_cupones($id);
-		if ($result->stok < $cantidad) {
-			$this->session->set_flashdata("Error", " cantidad insuficiente");
-			redirect(base_url() . 'comercio/comercio/cupones', 'refresh');
-		} else if ($cantidad != 0) {
-
-			//consultas de datos 
-			$resultado = $this->Model_login->cargar_datos_cliente($id_usuario);
-			$resulta = $this->Model_login->cargar_datos1();
-			$resul = $this->Model_login->datos_comercio($id_comercio);
-
-			//traer abuelo
-
-			$traer_abuelo = $this->Model_login->traerAbuelo($id_papa_pago);
-			$pago_abuelo = $this->Model_login->cargar_datos_abuelo($traer_abuelo->id_papa_pago);
-			//actualizar el stock
-			$stock = $this->input->post('stock');
-
-			if ($stock != "ilimitado") {
-				$stok = $result->stok - $cantidad;
-				$data = array('stok' => $stok);
-				$this->Model_comercio->actualizarCupones($id, $data);
+			if ($valor_nacio != NULL) {
+				$envio_nacio = 1;
+			} else {
+				$envio_nacio = 0;
 			}
-			//traer papa comercio
-
-			//traer parametros cashback
-			$taer_porcentaje = $this->Model_comercio->traer_parametros(6);
-			$taer_cashback_cliente = $this->Model_comercio->traer_parametros(1);
-			$taer_cashback_papa = $this->Model_comercio->traer_parametros(7);
-			$taer_cashback_abuelo = $this->Model_comercio->traer_parametros(8);
-
-
-
-			$precio = $this->input->post('precio');
-			$descuento = $this->input->post('descuento');
-
-			$ganancias = ((($precio * $descuento) / 100) * $taer_cashback_cliente->cashback / 100);
-			$ganancias_tiindo = ((($precio * $descuento) / 100) * 100 / 100);
-			$ganancias_negocio = ($precio - (($precio * $descuento) / 100));
-			$ganancias_papa = (($ganancias_tiindo) * $taer_cashback_papa->cashback) / 100;
-			$ganancias_abuelo = (((($precio * $descuento) / 100) * $taer_cashback_abuelo->cashback) / 100);
-			$ganancias_papa_comercio = ((($precio * $descuento) / 100) * $taer_porcentaje->cashback / 100);
-			print_r($ganancias_negocio);
+			$mi_archivo = 'img';
+			$config['upload_path'] = './assets/img/';
+			$config['allowed_types'] = "jpg|png|jpeg|pdf";
+			$config['maintain_ratio'] = TRUE;
+			$config['create_thumb'] = FALSE;
+			$config['width'] = 800;
+			$config['height'] = 800;
+			$this->load->library('upload', $config);
+			if (!$this->upload->do_upload($mi_archivo)) {
+				redirect(base_url() . "comercio/create_cupones/" . $id, "refresh");
+				$this->session->set_flashdata('error', ' <center><div class="alert alert-danger align-items-center d-flex" style="width: 1000px;"> Error al subir cuenta bancaria </div></center> ');
+			} else {
+				$data = array("upload_data" => $this->upload->data());
+				$imagen = $data['upload_data']['file_name'];
+				$id_categoria = $this->input->post('id_categoria');
 
 
-			// quite el id_wallet
+				if ($id_categoria == 0) {
+					$this->session->set_flashdata('error', '  <center><div class="alert alert-danger text-center  d-flex" style="width: 1000px;"> Error al subir Ecommvale,escoja una categoria</div></center>');
+					redirect(base_url() . "comercio/create_cupones/" . $id, "refresh");
+				} else {
 
-			$insertar = array(
-				"id_comercio" => $id_comercio,
-				"precio" => $precio,
-				"id_usuario" => $id_usuario,
-				"id_producto" => $id_producto,
-				"descuento" => $descuento,
-				"gana_cash" => $ganancias,
-				"gana_cash_papa" => $ganancias_papa,
-				"gana_cash_abuelo" => $ganancias_abuelo,
-				"ganancias_comercio" => $ganancias_negocio
-			);
-			//paso plata a Usuario
+					$arre = array(
 
+						"id_usuario" => $id,
+
+						"img" => $imagen,
+
+						"nombre" => $this->input->post('nombre'),
+
+						"stok" => $this->input->post('stok'),
+
+						"descripcion" => $this->input->post('descripcion'),
+
+						"precio" => $this->input->post('precio'),
+
+						"fecha_corte" => $this->input->post('fecha_corte'),
+
+						"descuento" => $this->input->post('descuento'),
+
+						"valor_domicilio" => $this->input->post('valor_domicilio'),
+
+						"hora" => $this->input->post('hora'),
+
+						"id_tipo" => $this->input->post('id_tipo'),
+
+						"minutos" => $this->input->post('minutos'),
+
+						"valor_nacio" => $valor_nacio,
+
+						"envio_nacio" => $envio_nacio,
+
+						"id_categoria" => $id_categoria,
+
+					);
+
+					if ($this->Model_comercio->guardarcupon($arre)) {
+						$this->session->set_flashdata('error', '  <center><div class="alert alert-success text-center  d-flex" style="width: 1000px;"> Ecommvale subido exitosamente</div></center>');
+						redirect(base_url() . "comercio/create_cupones/" . $arre['id_usuario'], "refresh");
+					} else {
+						$this->session->set_flashdata('error', '  <center><div class="alert alert-danger text-center  d-flex" style="width: 1000px;"> Error al subir Ecommvale,intente de nuevo</div></center>');
+						redirect(base_url() . "comercio/create_cupones/" . $arre['id_usuario'], "refresh");
+					}
+				}
+			}
 		}
 	}
 
-	public function peticion()
 
+
+	public function eliminarCupon($id)
+	{
+		$activo = 0;
+
+		$id_comercio = $this->input->post('id_comercio');
+
+		$insertar = array(
+
+			"activo" => $activo,
+
+		);
+
+		$this->Model_comercio->eliminarCupon($insertar, $id);
+		$this->session->set_flashdata('error', '  <center><div class="alert alert-success text-center  d-flex" style="width: 1000px;"> Ecommvale Inhabilitado exitosamente</div></center>');
+		redirect(base_url() . "comercio/create_cupones/" . $id_comercio);
+	}
+	public function habilitarCupon($id)
+	{
+		$activo = 1;
+
+		$id_comercio = $this->input->post('id_comercio');
+
+		$insertar = array(
+
+			"activo" => $activo,
+
+		);
+
+		$this->Model_comercio->eliminarCupon($insertar, $id);
+		$this->session->set_flashdata('error', '  <center><div class="alert alert-success text-center  d-flex" style="width: 1000px;"> Ecommvale Habilitado exitosamente</div></center>');
+		redirect(base_url() . "comercio/create_cupones/" . $id_comercio);
+	}
+
+
+	public function modificarcupon($id)
+	{
+		$nombre = $this->input->post('nombre');
+		$id_comercio = $this->input->post('id_comercio');
+		$precio = $this->input->post('precio');
+		$fecha_corte = $this->input->post('fecha_corte');
+		$descuento = $this->input->post('descuento');
+
+		$id_tipo = $this->input->post('id_tipo');
+		$datos_cupon = $this->Model_comercio->traerdatoscupon($id);
+
+
+		if ($descuento >= $datos_cupon->descuento) {
+
+			$insertar = array(
+
+				"nombre" => $nombre,
+
+				"precio" => $precio,
+
+				"fecha_corte" => $fecha_corte,
+
+				"descuento" => $descuento,
+
+				"id_tipo" => $id_tipo,
+			);
+
+			$this->Model_comercio->actualizarCupones($id, $insertar);
+			$this->session->set_flashdata('error', '  <center><div class="alert alert-success text-center  d-flex" style="width: 1000px;"> Ecommvale Modificado exitosamente</div></center>');
+			redirect(base_url() . "comercio/create_cupones/" . $id_comercio);
+		} else {
+			$this->session->set_flashdata('error', '  <center><div class="alert alert-danger text-center  d-flex" style="width: 1000px;"> Porcentaje debe ser mayor o igual al acordado</div></center>');
+			redirect(base_url() . "comercio/create_cupones/" . $id_comercio);
+		}
+	}
+	public function modificarcuponfoto($id)
+	{
+		$id_comercio = $this->input->post('id_comercio');
+
+		$mi_archivo = 'img';
+		$config['upload_path'] = './assets/img/';
+		$config['allowed_types'] = "jpg|png|jpeg|pdf";
+		$config['maintain_ratio'] = TRUE;
+		$config['create_thumb'] = FALSE;
+		$config['width'] = 800;
+		$config['height'] = 800;
+		$this->load->library('upload', $config);
+		if (!$this->upload->do_upload($mi_archivo)) {
+			redirect(base_url() . "comercio/create_cupones/" . $id_comercio, "refresh");
+			$this->session->set_flashdata('error', ' <center><div class="alert alert-danger align-items-center d-flex" style="width: 1000px;"> Error al subir La imagen </div></center> ');
+		} else {
+			$data = array("upload_data" => $this->upload->data());
+			$imagen = $data['upload_data']['file_name'];
+
+
+			$arre = array(
+				"img" => $imagen,
+			);
+			if ($this->Model_comercio->actualizarCupones($id, $arre)) {
+				$this->session->set_flashdata('error', '  <center><div class="alert alert-success text-center  d-flex" style="width: 1000px;"> Ecommvale Actualizado  exitosamente</div></center>');
+				redirect(base_url() . "comercio/create_cupones/" . $id_comercio, "refresh");
+			} else {
+				$this->session->set_flashdata('error', '  <center><div class="alert alert-danger text-center  d-flex" style="width: 1000px;"> Error al subir Imagen,intente de nuevo</div></center>');
+				redirect(base_url() . "comercio/create_cupones/" . $id_comercio, "refresh");
+			}
+		}
+	}
+
+
+
+
+	public function getProductosByCategoria()
+	{
+		$id = $this->input->post("id");
+		$resultado = $this->Model_login->cargar_datos();
+		$ciudad = $resultado->ciudad;
+		$productos = $this->Model_comercio->getProductosByCategoria($id, $ciudad);
+		echo json_encode($productos);
+	}
+	public function traernego()
+	{
+		$id = $this->input->post("id");
+		$productos = $this->Model_comercio->buscarnego($id);
+		echo json_encode($productos);
+	}
+	public function traerproducto()
+	{
+		$buscar = $this->input->post("buscar");
+		$resultado = $this->Model_login->cargar_datos();
+		$ciudad = $resultado->ciu_co;
+		$productos = $this->Model_comercio->buscarproducto($buscar, $ciudad);
+		echo json_encode($productos);
+	}
+	public function traerlanding()
+	{
+		$buscar = $this->input->post("buscar");
+		$productos = $this->Model_comercio->traerproducto($buscar);
+		echo json_encode($productos);
+	}
+	//ajax para filtros
+	public function maspuntos()
+	{
+		$productos = $this->Model_comercio->maspuntos();
+		echo json_encode($productos);
+	}
+
+	public function Menose_puntos()
+	{
+		$productos = $this->Model_comercio->menospuntos();
+		echo json_encode($productos);
+	}
+
+
+
+
+	public function peticion()
 	{
 
 		$id_comercio = $this->input->post('id_comercio');
@@ -646,9 +772,8 @@ class Comercio extends CI_Controller
 
 		if ($resultado->cuenta_COP < $valor || 0 == $valor || $minimo->cashback > $valor) {
 
-			$this->session->set_flashdata('error_maximo', ' <center><div class="alert alert-danger text-center" style="width: 1000px;">Error, Valor supera al disponible </div><center>');
-
-			redirect(base_url() . 'index', 'refresh');
+			$this->session->set_flashdata('error_maximo', ' <center><div class="alert alert-danger text-center d-flex"  style="width: 1000px;">Error, Valor supera al disponible </div><center>');
+			redirect(base_url() . 'Comercio', 'refresh');
 		} else if ($resultado->cuenta_COP > $valor) {
 
 			$Wallet_COP = $cuenta_COP - $valor;
@@ -675,23 +800,22 @@ class Comercio extends CI_Controller
 
 
 
-			$this->session->set_flashdata('realizado', '<center><div class="alert alert-danger text-center" style="width: 1000px;">Peticion Exitosa</div><center>');
+			$this->session->set_flashdata('realizado', '<center><div class="alert alert-success d-flex text-center" style="width: 1000px;">Peticion Exitosa</div><center>');
 
-			redirect(base_url() . 'comercio/index', 'refresh');
+			redirect(base_url() . 'Comercio', 'refresh');
 		}
 	}
 
 
 
 	public function view_peticion()
-
 	{
 
 		$result['perfil'] = $this->Model_login->cargar_datos();
 
 		$result['peticiones'] = $this->Model_comercio->traerPeticion();
 
-
+		$result['ciudad'] = $this->Model_comercio->traerciudad1();
 
 		$this->load->view('prueba_header', $result);
 
@@ -701,12 +825,12 @@ class Comercio extends CI_Controller
 	}
 
 	public function peticionComercio($id)
-
 	{
 
 		$result['perfil'] = $this->Model_login->cargar_datos_comercio();
 
 		$result['peticion_comercio'] = $this->Model_comercio->traer_peticion_comercio($id);
+
 
 		$this->load->view('prueba_header', $result);
 
@@ -743,15 +867,11 @@ class Comercio extends CI_Controller
 		redirect(base_url() . 'comercio/view_peticion', 'refresh');
 	}
 	public function aprobarPeticion($id)
-
 	{
 
 		$mi_archivo = 'img';
-
 		$config['upload_path'] = './assets/img/';
-
 		$config['allowed_types'] = "jpg|png|jpeg";
-
 
 
 		$this->load->library('upload', $config);
@@ -804,83 +924,104 @@ class Comercio extends CI_Controller
 	public function puntoRecarga()
 	{
 		//todos los input
+
+		$metodo = $this->input->post('metodo');
 		$cedula = $this->input->post('cedula');
 		$valor = $this->input->post('valor');
-		$id_comercio = $this->input->post('id_comercio');
+		$tipo = $this->input->post('tipo');
 
-		//traer datos , negocio,tiindo, clientes
-		$resultado = $this->Model_login->traerdatosCedula($cedula);
-		$resulta = $this->Model_login->cargar_datos1();
-		$res = $this->Model_login->cargar_datos_comercio($id_comercio);
-		$taer_cashback = $this->Model_comercio->traer_parametros(3); // id:3 ==1
-		$taer_porcentaje = $this->Model_comercio->traer_parametros(5); // id:5 =50
-		$taer_minimo = $this->Model_comercio->traer_parametros(4); // id:4 ==5.000
+		if ($metodo == 99) {
+			$cedula = $this->input->post('cedula');
+			$valor = $this->input->post('valor');
+			$id_comercio = $this->input->post('id_comercio');
 
-		$id_usuario = $resultado->id;
-		//operaciones
-		$ganancias_general = ($valor * $taer_cashback->cashback) / 100;
-		$recarga = $valor - $ganancias_general;
+			$cupo = $this->Model_recargas->consulta_cupo();
+			$res = $this->Model_login->cargar_datos_comercio($id_comercio);
 
-		$ganancias_tiindo = ($ganancias_general * $taer_porcentaje->cashback) / 100;
-		$ganancias_comercio = ($ganancias_general - $ganancias_tiindo);
-		$debe_negocio = $recarga + $ganancias_tiindo;
-		$arre = array(
-			"id_negocio" => $id_comercio,
-			"cc_usuario" => $cedula,
-			"valor" => $debe_negocio,
-		);
-		//usuario
-		if ($valor < $taer_minimo->cashback) {
-			$this->session->set_flashdata('error', '<center><div class="alert alert-danger text-center" style="width: 1000px;">Error, recarga anulada</div></center>');
-			redirect(base_url() . 'comercio/viewRecargas/' . $arre['id_negocio'], 'refresh');
-		} else {
+			if ($res->cuenta_COP_deuda + $valor <= $cupo->valor) {
+				//traer datos , negocio,tiindo, clientes
+				$resultado = $this->Model_login->traerdatosCedula($cedula);
+				$resulta = $this->Model_login->cargar_datos1();
 
-			//cliente
+				$taer_cashback = $this->Model_comercio->traer_parametros(3); // id:3 ==1
+				$taer_porcentaje = $this->Model_comercio->traer_parametros(5); // id:5 =50
+				$taer_minimo = $this->Model_comercio->traer_parametros(4); // id:4 ==5.000
 
-			if ($resultado->cuenta_COP < 0) {
-				$this->session->set_flashdata('error_maximo', '<div class="alert alert-danger text-center" style="width: 1000px;">Error al solicitar retiro</div>');
-			} else if ($resultado->cuenta_COP >= 0) {
+				$id_usuario = $resultado->id;
+				//operaciones
+				$ganancias_general = ($valor * $taer_cashback->cashback) / 100;
+				$recarga = $valor - $ganancias_general;
 
-				$Wallet_COP = ($resultado->cuenta_COP + $recarga);
-
-				$dato = array('cuenta_COP' => $Wallet_COP);
-				$this->Model_comercio->actualizarwallet($id_usuario, $dato);
-				$this->session->set_flashdata("Realizado", " compra exitosa");
-
-				//tiindo
-				if ($resulta->cuenta_COP < 0) {
-					$this->session->set_flashdata('error_maximo', '<div class="alert alert-danger text-center" style="width: 1000px;">Error al solicitar retiro</div>');
-				} else if ($resulta->cuenta_COP >= 0) {
-
-					$Wallet_COP = ($resulta->cuenta_COP + $ganancias_tiindo);
-
-					$dato = array('cuenta_COP' => $Wallet_COP);
-					$this->Model_comercio->actualizarwallet(7, $dato);
-					$this->session->set_flashdata("Realizado", " compra exitosa");
-				}
-				//comercio
-				if ($res->cuenta_COP_deuda < 0) {
-					$this->session->set_flashdata('error_maximo', '<div class="alert alert-danger text-center" style="width: 1000px;">Error al solicitar retiro</div>');
-				} else if ($res->cuenta_COP_deuda >= 0) {
-					$Wallet_COP = $res->cuenta_COP_deuda + $debe_negocio;
-					$dato = array(
-						'cuenta_COP_deuda' => $Wallet_COP
-					);
-					$this->Model_comercio->guardarRegistroRecarga($arre);
-					$this->Model_comercio->actualizarwallet_comercio($id_comercio, $dato);
-					$this->session->set_flashdata('realizado', '<center><div class="alert alert-danger text-center" style="width: 1000px;">Recarga Exitosa</div></center>');
+				$ganancias_tiindo = ($ganancias_general * $taer_porcentaje->cashback) / 100;
+				$ganancias_comercio = ($ganancias_general - $ganancias_tiindo);
+				$arre = array(
+					"id_negocio" => $id_comercio,
+					"cc_usuario" => $cedula,
+					"valor" => $valor,
+					"valor_recarga" => $valor,
+					"tipo" => $tipo,
+				);
+				//se guarda la informacion
+				$this->Model_comercio->guardarRegistroRecarga($arre);
+				//usuario
+				if ($valor < $taer_minimo->cashback) {
+					$this->session->set_flashdata('error', '<center><div class="alert alert-danger text-center" style="width: 1000px;">Error, recarga anulada</div></center>');
 					redirect(base_url() . 'comercio/viewRecargas/' . $arre['id_negocio'], 'refresh');
+				} else {
+					//cliente
+					if ($resultado->cuenta_COP < 0) {
+						$this->session->set_flashdata('error_maximo', '<div class="alert alert-danger text-center" style="width: 1000px;">Error al solicitar retiro</div>');
+					} else if ($resultado->cuenta_COP >= 0) {
+						$Wallet_COP = ($resultado->cuenta_COP + $recarga);
+						$dato = array('cuenta_COP' => $Wallet_COP);
+						$this->Model_comercio->actualizarwallet($id_usuario, $dato);
+						$this->session->set_flashdata("Realizado", " compra exitosa");
+						//tiindo
+						if ($resulta->cuenta_COP < 0) {
+							$this->session->set_flashdata('error_maximo', '<div class="alert alert-danger text-center" style="width: 1000px;">Error al solicitar retiro</div>');
+						} else if ($resulta->cuenta_COP >= 0) {
+							$Wallet_COP = ($resulta->cuenta_COP + $ganancias_tiindo);
+							$dato = array('cuenta_COP' => $Wallet_COP);
+							$this->Model_comercio->actualizarwallet(7, $dato);
+							$this->session->set_flashdata("Realizado", " compra exitosa");
+						}
+						//comercio
+						if ($res->cuenta_COP_deuda < 0) {
+							$this->session->set_flashdata('error_maximo', '<div class="alert alert-danger text-center" style="width: 1000px;">Error al solicitar retiro</div>');
+						} else if ($res->cuenta_COP_deuda >= 0) {
+							$Wallet_COP = $res->cuenta_COP_deuda + $valor;
+							$Wallet_comision = $res->cuenta_COP + $ganancias_comercio;
+							$dato = array(
+								'cuenta_COP_deuda' => $Wallet_COP,
+								'cuenta_COP' => $Wallet_comision,
+							);
+							$this->Model_comercio->actualizarwallet_comercio($id_comercio, $dato);
+							$this->session->set_flashdata('realizado', '<center><div class="alert alert-success text-center" style="width: 1000px;">Recarga Exitosa</div></center>');
+							redirect(base_url() . 'comercio/viewRecargas/' . $arre['id_negocio'], 'refresh');
+						}
+					}
 				}
+			} else {
+				$this->session->set_flashdata('realizado', '<center><div class="alert alert-danger text-center" style="width: 1000px;">Superas el cupo disponible, Haz cruce de cuentas o Paga directamente</div></center>');
+				redirect(base_url() . 'comercio/viewRecargas/' . $id_comercio, 'refresh');
 			}
+		} else {
+			redirect(base_url() . "Recargas/proceso_recarga/$metodo/$cedula/$valor/$tipo");
 		}
 	}
-
 	public function viewRecargas($id)
-
 	{
 
 		$result['perfil'] = $this->Model_login->cargar_datos_comercio();
 		$result['historial_reca'] = $this->Model_comercio->traerHistorial_debe($id);
+		$result['metodos'] = $this->Model_comercio->metodos_pagos();
+		$result['efectivo'] = $this->Model_comercio->sum_efectivo($id);
+		$result['transfe'] = $this->Model_comercio->sum_transfe($id);
+		$result['cruce'] = $this->Model_recargas->traer_historial($id);
+		$result['planes'] = $this->Model_recargas->traer_paquetes();
+		$result['info'] = $this->Model_recargas->tb_cupo_soli_propio();
+		$result['contar'] = $this->Model_recargas->contar_cupos();
+		$result['tb_tarjetas'] = $this->Model_recargas->tb_cupo_soli_apro();
 
 		$this->load->view('prueba_header', $result);
 		$this->load->view('recargas/recargas_negocio', $result);
@@ -888,8 +1029,9 @@ class Comercio extends CI_Controller
 	}
 
 	public function historial_recargas()
-
 	{
+
+		$result['categorias'] = $this->Model_cupones->traerCategorias();
 
 		$result['perfil'] = $this->Model_login->cargar_datos();
 
@@ -901,6 +1043,15 @@ class Comercio extends CI_Controller
 
 		$result['suma'] = $this->Model_comercio->suma_cuentas_deudoras();
 
+		$result['tb_cupos'] = $this->Model_recargas->tb_cupo_soli_admin();
+
+		$result['recar'] = $this->Model_comercio->solicitudes_recarga();
+
+		$result['tb_pagos'] = $this->Model_recargas->tb_pagos();
+
+		$result['info_cupos'] = $this->Model_recargas->traer_paquetes();
+		$result['ciudad'] = $this->Model_comercio->traerciudad1();
+
 		$this->load->view('prueba_header', $result);
 
 		$this->load->view('recargas/view_recargas', $result);
@@ -909,7 +1060,6 @@ class Comercio extends CI_Controller
 	}
 
 	public function cruce_cuentas($id)
-
 	{
 
 		$mi_archivo = 'img';
@@ -966,9 +1116,17 @@ class Comercio extends CI_Controller
 			}
 		}
 	}
+	public function updateciudad($id)
+	{
+		$ciudad = $this->input->get('ciudad');
+		$arre = array(
+			"ciu_co" => $ciudad,
+		);
+		$this->Model_login->ModificarDerecha($arre, $id);
+		redirect(base_url() . 'comercio/cupones', 'refresh');
+	}
 
 	public function aceptarPago($id)
-
 	{
 		$resulta = $this->Model_login->cargar_datos1();
 
@@ -1047,12 +1205,8 @@ class Comercio extends CI_Controller
 	// prueba escritorio
 
 	public function traer_usuario()
-
 	{
-
 		$cedula = $this->input->post('cedula');
-
-
 
 		$resultado = $this->Model_comercio->traerCedula($cedula);
 
@@ -1061,9 +1215,11 @@ class Comercio extends CI_Controller
 
 	public function config_parametros()
 	{
-
+		$result['ciudad'] = $this->Model_comercio->traerciudad1();
 		$result['perfil'] = $this->Model_login->cargar_datos();
 		$result['parametros'] = $this->Model_comercio->parametros();
+		$result['categorias'] = $this->Model_cupones->traerCategorias();
+
 		$this->load->view('prueba_header', $result);
 		$this->load->view('parametros', $result);
 		$this->load->view('prueba_footer', $result);
@@ -1078,27 +1234,113 @@ class Comercio extends CI_Controller
 		$this->Model_comercio->Modificar_parametros($insertar, $id);
 		redirect(base_url() . 'comercio/config_parametros', 'refresh');
 	}
-	
-	public function verificar_user()
+	public function compras()
 	{
+		$result['ciudad'] = $this->Model_comercio->traerciudad1();
 		$result['perfil'] = $this->Model_login->cargar_datos();
-		$result['validacion'] = $this->Model_comercio->validacion();
+
 		$this->load->view('prueba_header', $result);
-		$this->load->view('validacion/validar', $result);
+
+		$this->load->view('ventas/compra', $result);
+
 		$this->load->view('prueba_footer', $result);
 	}
-	public function habilitarUser($id)
+
+	/// cambio de imagen de producto de la 1 al 3
+
+	public function img1($id)
 	{
-		$verificar_user = "habilitado";
-		$data = array(
-			'verificar_user' => $verificar_user,
-		);
-		$this->Model_comercio->aceptarvalidacion($data, $id);
-		redirect(base_url() . 'comercio/verificar_user', 'refresh');
+		$id_negocio = $this->input->post("negocio");
+		$mi_archivo = 'img';
+		$config['upload_path'] = './assets/img/';
+		$config['allowed_types'] = "jpg|png|jpeg|webp";
+		$config['maintain_ratio'] = TRUE;
+		$config['create_thumb'] = FALSE;
+		$config['width'] = 800;
+		$config['height'] = 800;
+		$this->load->library('upload', $config);
+		if (!$this->upload->do_upload($mi_archivo)) {
+			$error = array('error' => $this->upload->display_errors());
+			$this->session->set_flashdata('error', '<div class="alert alert-success d-flex text-center"><label class="login__input name">Foto Actualizada</label></div>');
+			redirect(base_url() . "comercio/create_cupones/" . $id_negocio);
+		} else {
+			$data = array("upload_data" => $this->upload->data());
+			$imagen = $data['upload_data']['file_name'];
+			$arre = array(
+				"img" => $imagen,
+			);
+			if ($this->Model_comercio->updateimg($arre, $id)) {
+				$this->session->set_flashdata('error', '<div class="alert alert-success d-flex text-center"><label class="login__input name">Foto Actualizada</label></div>');
+				redirect(base_url() . "comercio/create_cupones/" . $id_negocio);
+			} else {
+				$this->session->set_flashdata('error', '<div class="alert alert-success d-flex text-center"><label class="login__input name">Foto Actualizada</label></div>');
+				redirect(base_url() . "comercio/create_cupones/" . $id_negocio);
+			}
+		}
 	}
+	public function img2($id)
+	{
+		$id_negocio = $this->input->post("negocio");
 
+		$mi_archivo = 'img';
+		$config['upload_path'] = './assets/img';
+		$config['allowed_types'] = "jpg|png|jpeg|webp";
+		$config['maintain_ratio'] = TRUE;
+		$config['create_thumb'] = FALSE;
+		$config['width'] = 800;
+		$config['height'] = 800;
+		$this->load->library('upload', $config);
+		if (!$this->upload->do_upload($mi_archivo)) {
+			$error = array('error' => $this->upload->display_errors());
+			$this->session->set_flashdata('error', '<div class="alert alert-success d-flex text-center"><label class="login__input name">Foto Actualizada</label></div>');
+			redirect(base_url() . "comercio/create_cupones/" . $id_negocio);
+		} else {
+			$data = array("upload_data" => $this->upload->data());
+			$imagen = $data['upload_data']['file_name'];
+			$arre = array(
+				"img2" => $imagen,
+			);
+			if ($this->Model_comercio->updateimg($arre, $id)) {
+				$this->session->set_flashdata('error', '<div class="alert alert-success d-flex text-center"><label class="login__input name">Foto Actualizada</label></div>');
+				redirect(base_url() . "comercio/create_cupones/" . $id_negocio);
+			} else {
+				$this->session->set_flashdata('error', '<div class="alert alert-success d-flex text-center"><label class="login__input name">Foto Actualizada</label></div>');
+				redirect(base_url() . "comercio/create_cupones/" . $id_negocio);
+			}
+		}
+	}
+	public function img3($id)
+	{
+		$id_negocio = $this->input->post("negocio");
+
+		$mi_archivo = 'img';
+		$config['upload_path'] = './assets/img';
+		$config['allowed_types'] = "jpg|png|jpeg|webp";
+		$config['maintain_ratio'] = TRUE;
+		$config['create_thumb'] = FALSE;
+		$config['width'] = 800;
+		$config['height'] = 800;
+		$this->load->library('upload', $config);
+		if (!$this->upload->do_upload($mi_archivo)) {
+			$error = array('error' => $this->upload->display_errors());
+			$this->session->set_flashdata('error', '<div class="alert alert-success d-flex text-center"><label class="login__input name">Foto Actualizada</label></div>');
+			redirect(base_url() . "comercio/create_cupones/" . $id_negocio);
+		} else {
+			$data = array("upload_data" => $this->upload->data());
+			$imagen = $data['upload_data']['file_name'];
+			$arre = array(
+				"img3" => $imagen,
+			);
+			if ($this->Model_comercio->updateimg($arre, $id)) {
+				$this->session->set_flashdata('error', '<div class="alert alert-success d-flex text-center"><label class="login__input name">Foto Actualizada</label></div>');
+				redirect(base_url() . "comercio/create_cupones/" . $id_negocio);
+			} else {
+				$this->session->set_flashdata('error', '<div class="alert alert-success d-flex text-center"><label class="login__input name">Foto Actualizada</label></div>');
+				redirect(base_url() . "comercio/create_cupones/" . $id_negocio);
+			}
+		}
+	}
 	public function escritorio()
-
 	{
 
 		$result['perfil'] = $this->Model_login->cargar_datos_cliente();

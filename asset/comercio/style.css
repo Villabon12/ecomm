@@ -1,0 +1,20 @@
+.margen {
+
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+    text-align: center;
+
+}
+
+.demoregi {
+    position: absolute;
+    top: 50%;
+    left: 45%;
+    margin-left: -15rem;
+    margin-top: -26.5rem;
+    width: 50rem;
+    height: 80rem;
+    overflow: hidden;
+}
